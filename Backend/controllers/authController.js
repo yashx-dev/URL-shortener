@@ -14,7 +14,7 @@ const register = async (req, res) => {
     const token = generateToken(user._id);
 
     res.cookie("token", token, {
-      httponly: true,
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -44,6 +44,27 @@ const login = async (req, res) => {
 
     const token = generateToken(existingUser._id);
     response(res, 200, true, "Login successfully", { user: existingUser, token });
+  } catch (error) {
+    response(res, 500, false, "Server Error", {
+      ...(process.env.NODE_ENV === "development"
+        ? { error: error.message }
+        : {}),
+    });
+  }
+};
+
+const logout = async (req, res) => {
+  try {
+    
+    res.cookie("token", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      expires: new Date(0),
+      path: "/",
+    });
+
+    response(res, 200, true, "Logout successfully");
   } catch (error) {
     response(res, 500, false, "Server Error", {
       ...(process.env.NODE_ENV === "development"
