@@ -30,3 +30,25 @@ const register = async (req, res) => {
     });
   }
 };
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const existingUser = await User.findOne({ email }).select("+password");
+    if (!existingUser) {
+      return response(res, 401, false, "Invalid credentials");
+    }
+    const isMatch = await existingUser.comparePassword(password);
+    if (!isMatch) {
+      return response(res, 401, false, "Invalid credentials");
+    }
+
+    const token = generateToken(existingUser._id);
+    response(res, 200, true, "Login successfully", { user: existingUser, token });
+  } catch (error) {
+    response(res, 500, false, "Server Error", {
+      ...(process.env.NODE_ENV === "development"
+        ? { error: error.message }
+        : {}),
+    });
+  }
+};
