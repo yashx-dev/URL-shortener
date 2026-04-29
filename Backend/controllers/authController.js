@@ -43,7 +43,10 @@ const login = async (req, res) => {
     }
 
     const token = generateToken(existingUser._id);
-    response(res, 200, true, "Login successfully", { user: existingUser, token });
+    response(res, 200, true, "Login successfully", {
+      user: existingUser,
+      token,
+    });
   } catch (error) {
     response(res, 500, false, "Server Error", {
       ...(process.env.NODE_ENV === "development"
@@ -55,7 +58,6 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
-    
     res.cookie("token", "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -73,3 +75,73 @@ const logout = async (req, res) => {
     });
   }
 };
+
+const getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password");
+    if (!user) {
+      return response(res, 404, false, "User not found");
+    }
+    response(res, 200, true, "User profile fetched successfully", {
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+      },
+    });
+  } catch (error) {
+    response(res, 500, false, "Server Error", {
+      ...(process.env.NODE_ENV === "development"
+        ? { error: error.message }
+        : {}),
+    });
+  }
+};
+
+const updateProfile = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return response(res, 404, false, "User not found");
+    }
+
+    if (name) {
+      user.name = name;
+    }
+
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({
+        email,
+        _id: { $ne: user._id },
+      });
+
+      if (existingUser) {
+        return response(res, 400, false, "Email already in use");
+      }
+
+      user.email = email;
+    }
+
+    if (password) {
+      user.password = password;
+    }
+    await user.save();
+    const token = generateToken(user._id);
+
+    response(res, 200, true, "Profile updated successfully", {
+      user,
+      token,
+    });
+  } catch (error) {
+    response(res, 500, false, "Server Error", {
+      ...(process.env.NODE_ENV === "development"
+        ? { error: error.message }
+        : {}),
+    });
+  }
+};
+
+export { register, login, logout, getProfile, updateProfile };
