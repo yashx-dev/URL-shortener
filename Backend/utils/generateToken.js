@@ -8,7 +8,7 @@ const generateToken = (userID) => {
   const token = jwt.sign({ userID }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE || "7d",
   });
-  return token
+  return token;
 };
 
-export default generateToken
+export { generateToken };
