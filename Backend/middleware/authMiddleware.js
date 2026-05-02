@@ -41,7 +41,6 @@ const protect = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error("Token verfication failed:", error);
     if (error.name === "JsonWebTokenError") {
       return response(res, 401, false, "Invalid token");
     }
@@ -49,7 +48,7 @@ const protect = async (req, res, next) => {
       return response(res, 401, false, "Token expired, please login again");
     }
 
-    return response(res, 401, false, "Not authorized, Token failed");
+    next(error);
   }
 };
 

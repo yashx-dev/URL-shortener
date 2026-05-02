@@ -2,7 +2,7 @@ import User from "../models/User.js";
 import generateToken from "../utils/generateToken.js";
 import response from "../utils/responseHandler.js";
 
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
     const emailExist = await User.findOne({ email });
@@ -23,11 +23,7 @@ const register = async (req, res) => {
 
     response(res, 201, true, "User created successfully", { user, token });
   } catch (error) {
-    response(res, 500, false, "Server Error", {
-      ...(process.env.NODE_ENV === "development"
-        ? { error: error.message }
-        : {}),
-    });
+    next(error);
   }
 };
 const login = async (req, res) => {
@@ -48,11 +44,7 @@ const login = async (req, res) => {
       token,
     });
   } catch (error) {
-    response(res, 500, false, "Server Error", {
-      ...(process.env.NODE_ENV === "development"
-        ? { error: error.message }
-        : {}),
-    });
+    next(error);
   }
 };
 
@@ -68,11 +60,7 @@ const logout = async (req, res) => {
 
     response(res, 200, true, "Logout successfully");
   } catch (error) {
-    response(res, 500, false, "Server Error", {
-      ...(process.env.NODE_ENV === "development"
-        ? { error: error.message }
-        : {}),
-    });
+    next(error);
   }
 };
 
@@ -91,11 +79,7 @@ const getProfile = async (req, res) => {
       },
     });
   } catch (error) {
-    response(res, 500, false, "Server Error", {
-      ...(process.env.NODE_ENV === "development"
-        ? { error: error.message }
-        : {}),
-    });
+    next(error);
   }
 };
 
@@ -136,11 +120,7 @@ const updateProfile = async (req, res) => {
       token,
     });
   } catch (error) {
-    response(res, 500, false, "Server Error", {
-      ...(process.env.NODE_ENV === "development"
-        ? { error: error.message }
-        : {}),
-    });
+    next(error);
   }
 };
 
