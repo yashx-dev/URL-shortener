@@ -3,7 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
-import router from "/routes/authRoutes.js";
+import router from "./routes/authRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 dotenv.config({ quiet: true });
 
@@ -47,14 +47,14 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGO_URI);
     console.log("MongoDB connected");
 
     const server = app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });
 
-    Promise.on("unhandledRejection", (err) => {
+    process.on("unhandledRejection", (err) => {
       console.error("Unhandled rejection:", err.message);
       server.close(() => process.exit(1));
     });

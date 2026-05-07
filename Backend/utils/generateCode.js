@@ -15,4 +15,4 @@ const generateCode = async () => {
   return code;
 };
 
-export default generateCode
+export default generateCode;

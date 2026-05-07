@@ -42,5 +42,20 @@ const updateProfileValidation = [
     .isLength({ min: 6 })
     .withMessage("Password must be at least 6 characters"),
 ];
+const createUrlValidation = [
+  body("longUrl")
+    .notEmpty()
+    .withMessage("URL is required")
+    .isURL({
+      protocols: ["http", "https"],
+      require_protocol: true,
+    })
+    .withMessage("Please provide a valid URL"),
+];
 
-export { registerValidation, loginValidation, updateProfileValidation };
+export {
+  registerValidation,
+  loginValidation,
+  updateProfileValidation,
+  createUrlValidation,
+};

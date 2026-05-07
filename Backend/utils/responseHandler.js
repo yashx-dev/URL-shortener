@@ -6,4 +6,4 @@ const response = (res, statusCode, success, message, payload = {}) => {
   });
 };
 
-export { response };
+export default response;
