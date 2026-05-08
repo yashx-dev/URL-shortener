@@ -3,12 +3,13 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
-import router from "./routes/authRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+import authRouter from "./routes/authRoutes.js";
+import urlRouter from "./routes/urlRoutes.js";
+import { redirect } from "./controllers/urlController.js";
 dotenv.config({ quiet: true });
 
 const app = express();
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -39,7 +40,9 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use("/auth", router);
+app.use("/auth", authRouter);
+app.use("/urls", urlRouter);
+app.get("/:shortCode", redirect);
 app.use(notFound);
 app.use(errorHandler);
 

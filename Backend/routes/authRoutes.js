@@ -14,13 +14,13 @@ import {
   updateProfileValidation,
 } from "../middleware/validationMiddleware.js";
 
-const router = express.Router();
+const authRouter = express.Router();
 
-router.post("/register", registerValidation, validateRequest, register);
-router.post("/login", loginValidation, validateRequest, login);
-router.post("/logout", protect, logout);
-router.get("/profile", protect, getProfile);
-router.put(
+authRouter.post("/register", registerValidation, validateRequest, register);
+authRouter.post("/login", loginValidation, validateRequest, login);
+authRouter.post("/logout", protect, logout);
+authRouter.get("/profile", protect, getProfile);
+authRouter.put(
   "/profile",
   protect,
   updateProfileValidation,
@@ -28,4 +28,4 @@ router.put(
   updateProfile,
 );
 
-export default router
+export default authRouter
