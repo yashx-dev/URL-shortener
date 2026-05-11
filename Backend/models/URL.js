@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from "./User";
+import User from "../models/User.js";
 
 const urlSchema = new mongoose.Schema({
   longUrl: {

@@ -2,6 +2,13 @@ import User from "../models/User.js";
 import generateToken from "../utils/generateToken.js";
 import response from "../utils/responseHandler.js";
 
+const cookiesOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+  path: "/",
+};
 const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -13,20 +20,16 @@ const register = async (req, res, next) => {
     const user = await User.create({ name, email, password });
     const token = generateToken(user._id);
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: "/",
-    });
+    res.cookie("token", token, cookiesOptions);
 
-    response(res, 201, true, "User created successfully", { user, token });
+    return response(res, 201, true, "User created successfully", {
+      user: { id: user._id, name: user.name, email: user.email },
+    });
   } catch (error) {
     next(error);
   }
 };
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const existingUser = await User.findOne({ email }).select("+password");
@@ -39,38 +42,32 @@ const login = async (req, res) => {
     }
 
     const token = generateToken(existingUser._id);
-    response(res, 200, true, "Login successfully", {
+    res.cookie("token", token, cookiesOptions);
+    return response(res, 200, true, "Login successfully", {
       user: existingUser,
-      token,
     });
   } catch (error) {
     next(error);
   }
 };
 
-const logout = async (req, res) => {
+const logout = async (req, res, next) => {
   try {
-    res.cookie("token", "", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      expires: new Date(0),
-      path: "/",
-    });
+    res.cookie("token", "", { ...cookiesOptions, expires: new Date(0) });
 
-    response(res, 200, true, "Logout successfully");
+    return response(res, 200, true, "Logout successfully");
   } catch (error) {
     next(error);
   }
 };
 
-const getProfile = async (req, res) => {
+const getProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id).select("-password");
     if (!user) {
       return response(res, 404, false, "User not found");
     }
-    response(res, 200, true, "User profile fetched successfully", {
+    return response(res, 200, true, "User profile fetched successfully", {
       user: {
         id: user._id,
         name: user.name,
@@ -83,7 +80,7 @@ const getProfile = async (req, res) => {
   }
 };
 
-const updateProfile = async (req, res) => {
+const updateProfile = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
     const user = await User.findById(req.user._id);
@@ -114,8 +111,8 @@ const updateProfile = async (req, res) => {
     }
     await user.save();
     const token = generateToken(user._id);
-
-    response(res, 200, true, "Profile updated successfully", {
+    res.cookie("token", token, cookiesOptions);
+    return response(res, 200, true, "Profile updated successfully", {
       user,
       token,
     });

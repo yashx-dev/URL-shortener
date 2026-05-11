@@ -48,7 +48,10 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 
 userSchema.set("toJSON", {
   transform: (originalDoc, plainDoc) => {
+    plainDoc.id = plainDoc._id;
     delete plainDoc.password;
+    delete plainDoc._id;
+    delete plainDoc.__v;
     return plainDoc;
   },
 });

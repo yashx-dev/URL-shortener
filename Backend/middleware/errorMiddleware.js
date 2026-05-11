@@ -7,7 +7,7 @@ const notFound = (req, res, next) => {
 };
 
 const errorHandler = (err, req, res, next) => {
-  const statusCode = req.statusCode === 200 ? 500 : req.statusCode;
+  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   const message = err.message || "Server error";
 
   if (err.code === 11000) {

@@ -1,4 +1,4 @@
-import Url from "../models/urlModel.js";
+import Url from "../models/URL.js";
 import response from "../utils/responseHandler.js";
 import generateCode from "../utils/generateCode.js";
 
