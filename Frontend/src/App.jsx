@@ -1,9 +1,7 @@
+import Routing from "./routes/Router.jsx";
+
 const App = () => {
-  return (
-    <>
-      <div className="text-red-600">App</div>
-    </>
-  );
+  return <Routing />;
 };
 
 export default App;
