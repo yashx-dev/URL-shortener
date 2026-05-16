@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import AuthContext from "./AuthContext.jsx";
+import { AuthContext } from "./AuthContext.jsx";
 import { userProfile } from "../services/AuthServices.js";
 
 const AuthProvider = ({ children }) => {
@@ -15,7 +15,7 @@ const AuthProvider = ({ children }) => {
           setUser(data.user);
           setIsLoggedIn(true);
         }
-      // eslint-disable-next-line no-unused-vars
+        // eslint-disable-next-line no-unused-vars
       } catch (error) {
         setUser(null);
         setIsLoggedIn(false);

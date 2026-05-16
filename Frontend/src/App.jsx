@@ -3,7 +3,7 @@ import AuthProvider from "./context/AuthProvider.jsx";
 const App = () => {
   return (
     <AuthProvider>
-      <Routing />;
+      <Routing />
     </AuthProvider>
   );
 };

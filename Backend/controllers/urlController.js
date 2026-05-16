@@ -22,7 +22,7 @@ const getUrls = async (req, res, next) => {
     const userId = req.user._id;
     const allUrl = await Url.find({ userId }).sort({ createdAt: -1 });
     if (!allUrl.length) {
-      return response(res, 200, true, "No URLs found");
+      return response(res, 200, true, "No URLs found", { urls: [] });
     }
     return response(res, 200, true, "URLs fetched successfully", { allUrl });
   } catch (error) {

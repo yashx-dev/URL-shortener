@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth.js";
-import { logoutUser, userUpdateProfile } from "../services/AuthServices.js";
+import { userLogout, userUpdateProfile } from "../services/AuthServices.js";
 import { createUrl, getUrls, deleteUrl } from "../services/UrlServices.js";
 
 const Dashboard = () => {
@@ -58,7 +58,7 @@ const Dashboard = () => {
   };
   const handleLogout = async () => {
     try {
-      await logoutUser();
+      await userLogout();
       logout();
     } catch (error) {
       console.log(error.response?.data?.message);
@@ -158,7 +158,7 @@ const Dashboard = () => {
       <section>
         <h2>Your URLs</h2>
 
-        {urls.length === 0 ? (
+        {urls?.length === 0 ? (
           <p>No URLs found</p>
         ) : (
           urls.map((url) => (
