@@ -18,7 +18,7 @@ const Login = () => {
       login(data.user);
       navigate("/dashboard");
     } catch (error) {
-      console.log(error.response.data);
+      console.log(error.response?.data?.message);
     }
   };
   return (

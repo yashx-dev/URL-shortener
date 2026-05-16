@@ -1,26 +1,37 @@
 import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth.js";
-import logoutUser from "../services/AuthServices.js";
+import { logoutUser, userUpdateProfile } from "../services/AuthServices.js";
 import { createUrl, getUrls, deleteUrl } from "../services/UrlServices.js";
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUserProfile } = useAuth();
   const [originalUrl, setOriginalUrl] = useState("");
-  const [urls, setUrl] = useState([]);
+  const [urls, setUrls] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
 
   const fetchUrls = async () => {
     try {
       const data = await getUrls();
-      setUrl(data.urls);
+      setUrls(data.urls);
     } catch (error) {
-      console.log(error.response.message);
+      console.log(error.response?.data?.message);
     }
   };
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchUrls();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setName(user.name);
+      setEmail(user.email);
+    }
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,7 +42,7 @@ const Dashboard = () => {
       setOriginalUrl("");
       fetchUrls();
     } catch (error) {
-      console.log(error.response.message);
+      console.log(error.response?.data?.message);
     } finally {
       setLoading(false);
     }
@@ -42,7 +53,7 @@ const Dashboard = () => {
       await deleteUrl(id);
       fetchUrls();
     } catch (error) {
-      console.log(error.response.message);
+      console.log(error.response?.data?.message);
     }
   };
   const handleLogout = async () => {
@@ -50,7 +61,17 @@ const Dashboard = () => {
       await logoutUser();
       logout();
     } catch (error) {
-      console.log(error.response.message);
+      console.log(error.response?.data?.message);
+    }
+  };
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const data = await userUpdateProfile({ name, email, password });
+      updateUserProfile(data.user);
+      setPassword("");
+    } catch (error) {
+      console.log(error.response?.data?.message);
     }
   };
 
@@ -59,9 +80,52 @@ const Dashboard = () => {
       {/* PROFILE SECTION */}
 
       <section>
-        <h1>Welcome {user?.name}</h1>
+        <h1>Profile</h1>
 
-        <p>{user?.email}</p>
+        <form onSubmit={handleProfileUpdate}>
+          <div>
+            <label>Name</label>
+
+            <input
+              type="text"
+              placeholder="Enter name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+    
+          <br />
+
+          <div>
+            <label>Email</label>
+
+            <input
+              type="email"
+              placeholder="Enter email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <br />
+
+          <div>
+            <label>New Password</label>
+
+            <input
+              type="password"
+              placeholder="Enter new password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <br />
+
+          <button type="submit">Update Profile</button>
+        </form>
+
+        <br />
 
         <button onClick={handleLogout}>Logout</button>
       </section>

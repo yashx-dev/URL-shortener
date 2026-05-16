@@ -22,7 +22,7 @@ const Register = () => {
       login(data.user);
       navigate("/dashboard");
     } catch (error) {
-      console.log(error.response.message);
+      console.log(error.response?.data?.message);
     }
   };
 
