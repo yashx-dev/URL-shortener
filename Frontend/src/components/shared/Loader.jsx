@@ -1,4 +1,4 @@
-import Spinner from "../ui/Spinner";
+import Spinner from "../ui/Spinner.jsx";
 
 const Loader = ({ fullScreen = false, text = "Loading..." }) => {
   if (fullScreen) {

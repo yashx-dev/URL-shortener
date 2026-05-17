@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Bars3Icon, XMarkIcon, LinkIcon } from "@heroicons/react/24/outline";
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../hooks/useAuth.js";
 
 const MobileNav = () => {
   const { isLoggedIn, user, logout } = useAuth();
