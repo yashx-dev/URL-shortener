@@ -6,7 +6,7 @@ import Login from "../pages/Login.jsx";
 import Dashboard from "../pages/Dashboard.jsx";
 import Register from "../pages/Register.jsx";
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
-import NoteFound from "../pages/NoteFound.jsx";
+import NotFound from "../pages/NotFound.jsx";
 
 const Routing = () => {
   return (
@@ -28,8 +28,8 @@ const Routing = () => {
         >
           <Route index element={<Dashboard />} />
         </Route>
-        
-        <Route path="*" element={<NoteFound />} />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

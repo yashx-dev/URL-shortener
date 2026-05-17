@@ -1,16 +1,17 @@
-import { Navigate } from "react-router-dom";
-import useAuth from "../hooks/useAuth.js";
-import Loader from "./shared/Loader.jsx"; 
+import { Navigate, useLocation } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import Loader from "./shared/Loader";
 
 const ProtectedRoute = ({ children }) => {
   const { isLoggedIn, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
-    return <Loader fullScreen text="Checking authentication..." />;     
+    return <Loader fullScreen text="Checking authentication..." />;
   }
 
   if (!isLoggedIn) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return children;
