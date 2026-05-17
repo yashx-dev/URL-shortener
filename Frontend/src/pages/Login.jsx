@@ -1,40 +1,46 @@
-import  { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { EnvelopeIcon, KeyIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
-import { userLogin } from '../services/AuthServices';
-import useAuth from '../hooks/useAuth';
-import Button from '../components/ui/Button';
-import Input from '../components/ui/Input';
-import Card from '../components/ui/Card';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  EnvelopeIcon,
+  KeyIcon,
+  ArrowRightIcon,
+} from "@heroicons/react/24/outline";
+import { userLogin } from "../services/AuthServices.js";
+import useAuth from "../hooks/useAuth.js";
+import Button from "../components/ui/Button.jsx";
+import Input from "../components/ui/Input.jsx";
+import Card from "../components/ui/Card.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [serverError, setServerError] = useState('');
+  const [serverError, setServerError] = useState("");
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.email.trim()) newErrors.email = 'Email is required';
-    if (!formData.password) newErrors.password = 'Password is required';
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.password) newErrors.password = "Password is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setServerError('');
+    setServerError("");
     if (!validate()) return;
 
     setIsLoading(true);
     try {
       const data = await userLogin(formData);
       login(data.user);
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (error) {
-      setServerError(error.response?.data?.message || 'Login failed. Please try again.');
+      setServerError(
+        error.response?.data?.message || "Login failed. Please try again.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -44,8 +50,12 @@ const Login = () => {
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-gray-50 dark:bg-gray-950">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Welcome back</h1>
-          <p className="text-gray-600 dark:text-gray-400">Sign in to manage your links</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            Welcome back
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Sign in to manage your links
+          </p>
         </div>
 
         <Card padding="large">
@@ -63,8 +73,8 @@ const Login = () => {
               placeholder="you@example.com"
               value={formData.email}
               onChange={(e) => {
-                setFormData(prev => ({ ...prev, email: e.target.value }));
-                setErrors(prev => ({ ...prev, email: '' }));
+                setFormData((prev) => ({ ...prev, email: e.target.value }));
+                setErrors((prev) => ({ ...prev, email: "" }));
               }}
               error={errors.email}
             />
@@ -81,16 +91,19 @@ const Login = () => {
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={(e) => {
-                  setFormData(prev => ({ ...prev, password: e.target.value }));
-                  setErrors(prev => ({ ...prev, password: '' }));
+                  setFormData((prev) => ({
+                    ...prev,
+                    password: e.target.value,
+                  }));
+                  setErrors((prev) => ({ ...prev, password: "" }));
                 }}
                 error={errors.password}
               />
             </div>
 
-            <Button 
-              type="submit" 
-              isLoading={isLoading} 
+            <Button
+              type="submit"
+              isLoading={isLoading}
               size="lg"
               className="w-full"
             >
@@ -100,8 +113,11 @@ const Login = () => {
           </form>
 
           <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-            Don't have an account?{' '}
-            <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+            >
               Create one now
             </Link>
           </p>
