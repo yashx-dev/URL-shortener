@@ -1,192 +1,201 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import useAuth from "../hooks/useAuth.js";
 import { userLogout, userUpdateProfile } from "../services/AuthServices.js";
 import { createUrl, getUrls, deleteUrl } from "../services/UrlServices.js";
+import StatsOverview from "../components/dashboard/StatsOverview.jsx";
+import CreateUrlForm from "../components/dashboard/CreateUrlForm.jsx";
+import UrlList from "../components/dashboard/UrlList.jsx";
+import ProfileForm from "../components/dashboard/ProfileForm.jsx";
+import Loader from "../components/shared/Loader.jsx";
+import Toast from "../components/shared/Toast.jsx";
 
 const Dashboard = () => {
   const { user, logout, updateUserProfile } = useAuth();
-  const [originalUrl, setOriginalUrl] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
   const [urls, setUrls] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const currentTab = searchParams.get("tab") || "overview";
+
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+  };
 
   const fetchUrls = async () => {
     try {
       const data = await getUrls();
-      setUrls(data.urls);
+      setUrls(data.urls || []);
     } catch (error) {
-      console.log(error.response?.data?.message);
-    }
-  };
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchUrls();
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setName(user.name);
-      setEmail(user.email);
-    }
-  }, [user]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!originalUrl) return;
-    try {
-      setLoading(true);
-      await createUrl({ originalUrl });
-      setOriginalUrl("");
-      fetchUrls();
-    } catch (error) {
-      console.log(error.response?.data?.message);
+      showToast(
+        error.response?.data?.message || "Failed to load URLs",
+        "error",
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (id) => {
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchUrls();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleCreateUrl = async (originalUrl) => {
+    setCreating(true);
     try {
-      await deleteUrl(id);
+      await createUrl({ originalUrl });
+      showToast("URL shortened successfully!");
       fetchUrls();
     } catch (error) {
-      console.log(error.response?.data?.message);
+      showToast(
+        error.response?.data?.message || "Failed to create short URL",
+        "error",
+      );
+    } finally {
+      setCreating(false);
     }
   };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this link?")) return;
+
+    try {
+      await deleteUrl(id);
+      showToast("Link deleted successfully");
+      fetchUrls();
+    } catch (error) {
+      showToast(
+        error.response?.data?.message || "Failed to delete URL",
+        "error",
+      );
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await userLogout();
       logout();
+      showToast("Logged out successfully");
+      // eslint-disable-next-line no-unused-vars
     } catch (error) {
-      console.log(error.response?.data?.message);
+      showToast("Logout failed", "error");
     }
   };
-  const handleProfileUpdate = async (e) => {
-    e.preventDefault();
+
+  const handleProfileUpdate = async (updateData) => {
     try {
-      const data = await userUpdateProfile({ name, email, password });
+      const data = await userUpdateProfile(updateData);
       updateUserProfile(data.user);
-      setPassword("");
+      showToast("Profile updated successfully");
     } catch (error) {
-      console.log(error.response?.data?.message);
+      showToast(
+        error.response?.data?.message || "Failed to update profile",
+        "error",
+      );
+      throw error;
     }
   };
+
+  const setTab = (tab) => {
+    setSearchParams(tab === "overview" ? {} : { tab });
+  };
+
+  if (loading) return <Loader text="Loading your dashboard..." />;
 
   return (
-    <div>
-      {/* PROFILE SECTION */}
+    <div className="space-y-6">
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
 
-      <section>
-        <h1>Profile</h1>
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            {currentTab === "profile" ? "Profile Settings" : "Dashboard"}
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">
+            {currentTab === "profile"
+              ? "Manage your account details"
+              : "Manage and track your shortened links"}
+          </p>
+        </div>
+      </div>
 
-        <form onSubmit={handleProfileUpdate}>
-          <div>
-            <label>Name</label>
-
-            <input
-              type="text"
-              placeholder="Enter name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-    
-          <br />
-
-          <div>
-            <label>Email</label>
-
-            <input
-              type="email"
-              placeholder="Enter email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-
-          <br />
-
-          <div>
-            <label>New Password</label>
-
-            <input
-              type="password"
-              placeholder="Enter new password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          <br />
-
-          <button type="submit">Update Profile</button>
-        </form>
-
-        <br />
-
-        <button onClick={handleLogout}>Logout</button>
-      </section>
-
-      <hr />
-
-      {/* CREATE URL SECTION */}
-
-      <section>
-        <h2>Create Short URL</h2>
-
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Enter URL"
-            value={originalUrl}
-            onChange={(e) => setOriginalUrl(e.target.value)}
-          />
-
-          <button type="submit">
-            {loading ? "Creating..." : "Shorten URL"}
+      {/* Tab Navigation (Mobile-friendly) */}
+      <div className="flex gap-2 border-b border-gray-200 dark:border-gray-800 pb-1 overflow-x-auto">
+        {[
+          { id: "overview", label: "Overview" },
+          { id: "urls", label: "My Links" },
+          { id: "profile", label: "Profile" },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setTab(tab.id)}
+            className={`
+              px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors
+              ${
+                currentTab === tab.id
+                  ? "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+              }
+            `}
+          >
+            {tab.label}
           </button>
-        </form>
-      </section>
+        ))}
+      </div>
 
-      <hr />
+      {/* Content Based on Tab */}
+      {currentTab === "overview" && (
+        <>
+          <StatsOverview urls={urls} />
+          <CreateUrlForm onSubmit={handleCreateUrl} loading={creating} />
+          <UrlList
+            urls={urls.slice(0, 5)}
+            onDelete={handleDelete}
+            onCreateClick={() => setTab("urls")}
+          />
+          {urls.length > 5 && (
+            <button
+              onClick={() => setTab("urls")}
+              className="w-full py-3 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+            >
+              View all {urls.length} links →
+            </button>
+          )}
+        </>
+      )}
 
-      {/* URL LIST SECTION */}
+      {currentTab === "urls" && (
+        <>
+          <CreateUrlForm onSubmit={handleCreateUrl} loading={creating} />
+          <UrlList
+            urls={urls}
+            onDelete={handleDelete}
+            onCreateClick={() =>
+              window.scrollTo({ top: 0, behavior: "smooth" })
+            }
+          />
+        </>
+      )}
 
-      <section>
-        <h2>Your URLs</h2>
-
-        {urls?.length === 0 ? (
-          <p>No URLs found</p>
-        ) : (
-          urls.map((url) => (
-            <div key={url._id}>
-              <p>Original URL:</p>
-
-              <a href={url.originalUrl} target="_blank" rel="noreferrer">
-                {url.originalUrl}
-              </a>
-
-              <p>Short URL:</p>
-
-              <a href={url.shortUrl} target="_blank" rel="noreferrer">
-                {url.shortUrl}
-              </a>
-
-              <p>
-                Clicks:
-                {url.clicks}
-              </p>
-
-              <button onClick={() => handleDelete(url._id)}>Delete</button>
-
-              <hr />
-            </div>
-          ))
-        )}
-      </section>
+      {currentTab === "profile" && (
+        <ProfileForm
+          user={user}
+          onUpdate={handleProfileUpdate}
+          onLogout={handleLogout}
+        />
+      )}
     </div>
   );
 };
