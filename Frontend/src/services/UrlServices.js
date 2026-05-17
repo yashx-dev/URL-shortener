@@ -8,8 +8,8 @@ const getUrls = async () => {
   const response = await api.get("/urls/my-urls");
   return response.data;
 };
-const deleteUrl = async (id) => {
-  const response = await api.delete(`/urls/my-urls/${id}`);
+const deleteUrl = async (shortCode) => {
+  const response = await api.delete(`/urls/my-urls/${shortCode}`);
   return response.data;
 };
 

@@ -8,8 +8,10 @@ import {
 } from "@heroicons/react/24/outline";
 import Button from "../components/ui/Button.jsx";
 import useAuth from "../hooks/useAuth.js";
+import useTitle from "../hooks/useTitle.js";
 
 const Home = () => {
+  useTitle("ShortLink - Free URL Shortener");
   const { isLoggedIn } = useAuth();
 
   const features = [

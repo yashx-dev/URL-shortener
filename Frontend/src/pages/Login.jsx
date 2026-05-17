@@ -7,11 +7,13 @@ import {
 } from "@heroicons/react/24/outline";
 import { userLogin } from "../services/AuthServices.js";
 import useAuth from "../hooks/useAuth.js";
+import useTitle from "../hooks/useTitle.js";
 import Button from "../components/ui/Button.jsx";
 import Input from "../components/ui/Input.jsx";
 import Card from "../components/ui/Card.jsx";
 
 const Login = () => {
+  useTitle("Sign In | ShortLink");
   const navigate = useNavigate();
   const { login } = useAuth();
   const [formData, setFormData] = useState({ email: "", password: "" });

@@ -11,24 +11,21 @@ const CreateUrlForm = ({ onSubmit, loading }) => {
     e.preventDefault();
     setError("");
 
-    if (!originalUrl.trim()) {
+    const url = originalUrl.trim();
+
+    if (!url) {
       setError("Please enter a URL");
       return;
     }
 
-    // Basic URL validation
-    let url = originalUrl.trim();
-    if (!/^https?:\/\//i.test(url)) {
-      url = "https://" + url;
+
+    if (!url.includes(".") || url.includes(" ")) {
+      setError("Please enter a valid URL");
+      return;
     }
 
-    try {
-      new URL(url);
-      onSubmit(url);
-      setOriginalUrl("");
-    } catch {
-      setError("Please enter a valid URL");
-    }
+    onSubmit(url);
+    setOriginalUrl("");
   };
 
   return (
@@ -43,8 +40,8 @@ const CreateUrlForm = ({ onSubmit, loading }) => {
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
         <div className="flex-1">
           <Input
-            type="url"
-            placeholder="Paste your long URL here..."
+            type="text"
+            placeholder="Paste your URL here (e.g., google.com)"
             value={originalUrl}
             onChange={(e) => {
               setOriginalUrl(e.target.value);

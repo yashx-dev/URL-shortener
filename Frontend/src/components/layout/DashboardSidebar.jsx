@@ -5,6 +5,7 @@ import {
   ArrowRightOnRectangleIcon,
   ChartBarIcon,
 } from "@heroicons/react/24/outline";
+import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth.js";
 
 const DashboardSidebar = ({ onNavigate }) => {
@@ -38,6 +39,16 @@ const DashboardSidebar = ({ onNavigate }) => {
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
+      <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+        <Link to="/" className="flex items-center gap-2 group">
+          <div className="bg-blue-600 p-1.5 rounded-lg group-hover:bg-blue-700 transition-colors">
+            <LinkIcon className="h-5 w-5 text-white" />
+          </div>
+          <span className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
+            ShortLink
+          </span>
+        </Link>
+      </div>
       {/* User Profile Summary */}
       <div className="p-6 border-b border-gray-200 dark:border-gray-800">
         <div className="flex items-center gap-3">
@@ -54,7 +65,6 @@ const DashboardSidebar = ({ onNavigate }) => {
           </div>
         </div>
       </div>
-
       {/* Navigation */}
       <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
         {navigation.map((item) => (
@@ -81,7 +91,6 @@ const DashboardSidebar = ({ onNavigate }) => {
           </NavLink>
         ))}
       </nav>
-
       {/* Logout */}
       <div className="p-4 border-t border-gray-200 dark:border-gray-800">
         <button

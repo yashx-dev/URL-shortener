@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import useAuth from "../hooks/useAuth.js";
+import useTitle from "../hooks/useTitle.js";
 import { userLogout, userUpdateProfile } from "../services/AuthServices.js";
 import { createUrl, getUrls, deleteUrl } from "../services/UrlServices.js";
 import StatsOverview from "../components/dashboard/StatsOverview.jsx";
@@ -11,6 +12,7 @@ import Loader from "../components/shared/Loader.jsx";
 import Toast from "../components/shared/Toast.jsx";
 
 const Dashboard = () => {
+  useTitle("Dashboard | ShortLink");
   const { user, logout, updateUserProfile } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const [urls, setUrls] = useState([]);
@@ -44,27 +46,29 @@ const Dashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleCreateUrl = async (originalUrl) => {
+  const handleCreateUrl = async (urlString) => {
     setCreating(true);
     try {
-      await createUrl({ originalUrl });
+      await createUrl({ longUrl: urlString });
       showToast("URL shortened successfully!");
       fetchUrls();
     } catch (error) {
-      showToast(
-        error.response?.data?.message || "Failed to create short URL",
-        "error",
-      );
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.errors?.[0] ||
+        "Failed to create short URL";
+
+      showToast(errorMessage, "error");
     } finally {
       setCreating(false);
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (shortCode) => {
     if (!window.confirm("Are you sure you want to delete this link?")) return;
 
     try {
-      await deleteUrl(id);
+      await deleteUrl(shortCode);
       showToast("Link deleted successfully");
       fetchUrls();
     } catch (error) {

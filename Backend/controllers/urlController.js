@@ -20,11 +20,11 @@ const createUrl = async (req, res, next) => {
 const getUrls = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const allUrl = await Url.find({ userId }).sort({ createdAt: -1 });
-    if (!allUrl.length) {
+    const urls = await Url.find({ userId }).sort({ createdAt: -1 });
+    if (!urls.length) {
       return response(res, 200, true, "No URLs found", { urls: [] });
     }
-    return response(res, 200, true, "URLs fetched successfully", { allUrl });
+    return response(res, 200, true, "URLs fetched successfully", { urls });
   } catch (error) {
     next(error);
   }

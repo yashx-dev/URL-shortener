@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { HomeIcon } from "@heroicons/react/24/outline";
 import Button from "../components/ui/Button.jsx";
+import useTitle from "../hooks/useTitle.js";
 
 const NotFound = () => {
+  useTitle("Page Not Found | ShortLink");
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
       <div className="text-center">

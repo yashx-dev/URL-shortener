@@ -7,7 +7,14 @@ import {
 import CopyButton from "../shared/CopyButton.jsx";
 import Button from "../ui/Button.jsx";
 
+// Build full short URL from shortCode
+const BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 const UrlCard = ({ url, onDelete }) => {
+  // Construct full short URL from shortCode
+  const shortUrl = `${BASE_URL}/${url.shortCode}`;
+
   const formatDate = (dateString) => {
     if (!dateString) return "Recently";
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -22,14 +29,14 @@ const UrlCard = ({ url, onDelete }) => {
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         {/* URL Info */}
         <div className="flex-1 min-w-0 space-y-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <a
-              href={url.shortUrl}
+              href={shortUrl} 
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 dark:text-blue-400 font-semibold hover:underline truncate flex items-center gap-1"
             >
-              {url.shortUrl}
+              {shortUrl} 
               <ArrowTopRightOnSquareIcon className="h-4 w-4 shrink-0" />
             </a>
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
@@ -53,11 +60,11 @@ const UrlCard = ({ url, onDelete }) => {
 
         {/* Actions */}
         <div className="flex items-center gap-2 sm:shrink-0">
-          <CopyButton text={url.shortUrl} />
+          <CopyButton text={shortUrl} /> 
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onDelete(url._id)}
+            onClick={() => onDelete(url.shortCode)}
             className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
             title="Delete URL"
           >
