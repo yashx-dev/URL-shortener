@@ -135,14 +135,14 @@ npm run build
 
 ---
 
-# 🔐 Authentication Flow
+## 🔐 Authentication Flow
 
-User logs in / registers
-Server generates JWT token
-Token is stored in HTTP-only cookies 
-Browser automatically sends cookie with each request
-Backend middleware reads and verifies token from cookie
-Protected routes are allowed/blocked based on verification
+- User logs in / registers  
+- Server generates JWT token  
+- Token is stored in HTTP-only cookies  
+- Browser automatically sends cookie with each request  
+- Backend middleware reads and verifies token from cookie  
+- Protected routes are allowed/blocked based on verification  
 ---
 
 # 🧠 Key Learnings
