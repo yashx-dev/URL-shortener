@@ -1,3 +1,9 @@
+<img width="320" height="180" alt="home" src="https://github.com/user-attachments/assets/b93247d2-205a-4518-aaa0-98af8333635b" />
+<img width="320" height="180" alt="home2" src="https://github.com/user-attachments/assets/ffc6031c-0bda-4a63-b6c7-f6a09553dead" />
+<img width="320" height="180" alt="dashboard" src="https://github.com/user-attachments/assets/13968cf8-6b06-41b9-904f-ccb95dba523f" />
+<img width="320" height="180" alt="profile" src="https://github.com/user-attachments/assets/58c695b1-d542-4b6f-9830-9c9c0b7ab056" />
+
+
 # 🔗 URL Shortener (MERN Stack)
 
 A full-stack URL shortener application built using the MERN stack. It allows users to register, login, create short URLs, and track click counts from a personal dashboard.
@@ -170,3 +176,8 @@ npm run build
 # 👨‍💻 Author
 
 GitHub: https://github.com/yashx-dev
+
+
+
+
+
